@@ -3,6 +3,7 @@ package database
 import (
 	"fmt"
 	"grlink/config"
+	"grlink/model"
 	"grlink/utils"
 	"time"
 
@@ -28,7 +29,7 @@ func InitializeDB() error {
 		}
 	} else {
 		utils.SugarLogger.Infoln("Connected to database")
-		db.AutoMigrate()
+		db.AutoMigrate(&model.Link{}, &model.LinkStatistics{}, &model.LinkVisit{})
 		utils.SugarLogger.Infoln("AutoMigration complete")
 		DB = db
 	}
