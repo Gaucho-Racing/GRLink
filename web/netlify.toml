@@ -1,10 +1,27 @@
 [[redirects]]
-  from = "/api/*"
-  to = "https://grapp-api.gauchoracing.com/:splat"
+  from = "/auth/*"
+  to = "/index.html"
   status = 200
   force = true
 
 [[redirects]]
-  from = "/*"
+  from = "/links/*"
   to = "/index.html"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/error"
+  to = "/index.html"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/"
+  to = "/index.html"
+  status = 200
+
+[[redirects]]
+  from = "/*"
+  to = "https://api.grlink.to/:splat"
   status = 200
