@@ -14,22 +14,21 @@ import {
   ExternalLink,
   BarChart2,
   Clock,
-  Trash2,
   Edit2,
   Check,
 } from "lucide-react";
 import { useState } from "react";
 import { formatDistanceToNow } from "date-fns";
 import { BACKEND_URL } from "@/consts/config";
-
+import { useNavigate } from "react-router-dom";
 interface LinkCardProps {
   link: Link;
   onEdit?: (link: Link) => void;
-  onDelete?: (link: Link) => void;
   onCopy?: (link: Link) => void;
 }
 
-export function LinkCard({ link, onEdit, onDelete, onCopy }: LinkCardProps) {
+export function LinkCard({ link, onCopy }: LinkCardProps) {
+  const navigate = useNavigate();
   const [copied, setCopied] = useState(false);
 
   const handleCopy = () => {
@@ -41,11 +40,7 @@ export function LinkCard({ link, onEdit, onDelete, onCopy }: LinkCardProps) {
   };
 
   const handleEdit = () => {
-    onEdit?.(link);
-  };
-
-  const handleDelete = () => {
-    onDelete?.(link);
+    navigate(`/links/${link.id}/edit`);
   };
 
   return (
@@ -118,15 +113,6 @@ export function LinkCard({ link, onEdit, onDelete, onCopy }: LinkCardProps) {
           >
             <Edit2 className="mr-2 h-4 w-4" />
             Edit
-          </Button>
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={handleDelete}
-            className="flex items-center text-destructive hover:text-destructive"
-          >
-            <Trash2 className="mr-2 h-4 w-4" />
-            Delete
           </Button>
         </div>
       </CardFooter>

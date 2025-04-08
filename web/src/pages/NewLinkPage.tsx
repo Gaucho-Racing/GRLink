@@ -244,14 +244,14 @@ export default function NewLinkPage() {
                       }}
                       className="mr-2 py-5"
                     >
-                      Discard Changes
+                      Cancel
                     </Button>
                     <OutlineButton
                       onClick={() => {
                         createLink();
                       }}
                     >
-                      Save Changes
+                      Create Link
                     </OutlineButton>
                   </div>
                 </div>
