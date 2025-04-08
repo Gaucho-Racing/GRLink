@@ -5,7 +5,7 @@ import "time"
 type Link struct {
 	ID          string    `json:"id" gorm:"primaryKey"`
 	OriginalURL string    `json:"original_url"`
-	ShortCode   string    `json:"short_code"`
+	ShortCode   string    `json:"short_code" gorm:"unique"`
 	UserID      string    `json:"user_id"`
 	User        User      `json:"user" gorm:"-"`
 	ExpiresAt   time.Time `json:"expires_at"`
@@ -21,6 +21,8 @@ func (Link) TableName() string {
 
 type LinkStatistics struct {
 	LinkID    string `json:"link_id"`
+	TotalVisits int `json:"total_visits"`
+	LastVisit time.Time `json:"last_visit"`
 	Visits    []LinkVisit `json:"visits" gorm:"-"`
 }
 
