@@ -1,4 +1,4 @@
-FROM --platform=$BUILDPLATFORM golang:1.22-alpine3.19 AS builder
+FROM --platform=$BUILDPLATFORM golang:1.23-alpine3.20 AS builder
 
 RUN apk --no-cache add ca-certificates
 RUN apk add --no-cache tzdata
@@ -17,7 +17,7 @@ RUN GOOS=$TARGETOS GOARCH=$TARGETARCH go build -o /grlink
 ##
 ## Deploy
 ##
-FROM alpine:3.19
+FROM alpine:3.20
 
 WORKDIR /
 

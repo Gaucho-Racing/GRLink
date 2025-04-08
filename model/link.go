@@ -5,7 +5,7 @@ import "time"
 type Link struct {
 	ID          string    `json:"id" gorm:"primaryKey"`
 	OriginalURL string    `json:"original_url"`
-	ShortCode   string    `json:"short_code" gorm:"unique"`
+	ShortCode   string    `json:"short_code"`
 	UserID      string    `json:"user_id"`
 	User        User      `json:"user" gorm:"-"`
 	ExpiresAt   time.Time `json:"expires_at"`
