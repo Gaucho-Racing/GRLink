@@ -1,7 +1,7 @@
 # GRLink
 
 [![build](https://github.com/Gaucho-Racing/grlink/actions/workflows/build.yml/badge.svg)](https://github.com/Gaucho-Racing/grlink/actions/workflows/build.yml)
-[![Netlify Status](https://api.netlify.com/api/v1/badges/c761998a-1e64-4f7c-9d31-7e69d63b30c0/deploy-status)](https://app.netlify.com/sites/gr-grlink/deploys)
+[![Netlify Status](https://api.netlify.com/api/v1/badges/d9d24841-17a3-42c1-8aa0-634d8fd333e8/deploy-status)](https://app.netlify.com/sites/grlink/deploys)
 [![Docker Pulls](https://img.shields.io/docker/pulls/gauchoracing/grlink?style=flat-square)](https://hub.docker.com/r/gauchoracing/grlink)
 [![Release](https://img.shields.io/github/release/gaucho-racing/grlink.svg?style=flat-square)](https://github.com/gaucho-racing/grlink/releases)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
