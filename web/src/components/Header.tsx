@@ -25,7 +25,8 @@ const Header = (props: HeaderProps) => {
     >
       <div className="flex flex-row items-center justify-between">
         <div className="flex flex-row items-center p-4">
-          <h1>Jiffy</h1>
+          <img src="/logo/grlink.png" width={50} height={50} alt="Logo" />
+          <h1 className="ml-4 text-2xl font-bold">GRLink</h1>
         </div>
         <div className="mr-4 flex flex-row p-4">
           <DropdownMenu>
@@ -48,7 +49,7 @@ const Header = (props: HeaderProps) => {
               <DropdownMenuItem
                 onClick={() =>
                   window.open(
-                    "https://sso.gauchoracing.com/users/348220961155448833/edit",
+                    `https://sso.gauchoracing.com/users/${currentUser.id}/edit`,
                     "_blank",
                   )
                 }

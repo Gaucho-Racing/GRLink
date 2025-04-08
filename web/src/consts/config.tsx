@@ -1,12 +1,12 @@
 export const BACKEND_URL =
-  import.meta.env.VITE_BACKEND_URL ?? "https://grapp.gauchoracing.com/api";
+  import.meta.env.VITE_BACKEND_URL ?? "https://api.grlink.to";
 
 export const SENTINEL_OAUTH_BASE_URL =
   "https://sso.gauchoracing.com/oauth/authorize";
-export const SENTINEL_CLIENT_ID = "grapp";
+export const SENTINEL_CLIENT_ID = "c1txl4YKsSgr";
 
 export const SOCIAL_LINKS = {
-  github: "https://github.com/gaucho-racing/jiffy",
+  github: "https://github.com/gaucho-racing/grlink",
   instagram: "https://instagram.com/gauchoracingucsb",
   twitter: "https://twitter.com/gaucho_racing",
   linkedin:
