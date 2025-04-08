@@ -36,6 +36,11 @@ func InitializeRoutes(router *gin.Engine) {
 	router.GET("/users", GetAllUsers)
 	router.GET("/users/@me", GetCurrentUser)
 	router.GET("/users/:userID", GetUser)
+	router.GET("/links", GetAllLinks)
+	router.GET("/links/:id", GetLinkByID)
+	router.POST("/links", CreateLink)
+	router.DELETE("/links/:id", DeleteLink)
+	router.GET("/:shortCode", LaunchLink)
 }
 
 func AuthChecker() gin.HandlerFunc {
@@ -58,6 +63,10 @@ func AuthChecker() gin.HandlerFunc {
 					c.Set("Auth-Audience", claims.Audience[0])
 					c.Set("Auth-Scope", claims.Scope)
 				}
+			}
+		} else {
+			if c.FullPath() != "/:shortCode" && c.FullPath() != "/ping" {
+				c.AbortWithStatusJSON(401, gin.H{"message": "you are not authorized to access this resource"})
 			}
 		}
 		c.Next()

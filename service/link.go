@@ -1,6 +1,7 @@
 package service
 
 import (
+	"errors"
 	"grlink/database"
 	"grlink/model"
 	"grlink/utils"
@@ -39,7 +40,7 @@ func GetLinkByShortCode(shortCode string) model.Link {
 	return link
 }
 
-func CreateLink(link model.Link) (model.Link, error) {
+func CreateLink(link model.Link, userID string) (model.Link, error) {
 	if link.ID == "" {
 		link.ID = uuid.New().String()
 	}
@@ -49,6 +50,23 @@ func CreateLink(link model.Link) (model.Link, error) {
 			link.ShortCode = uuid.New().String()[:6]
 		}
 	}
+
+	existingLink := GetLinkByID(link.ID)
+	if existingLink.ID != "" {
+		if existingLink.UserID != userID {
+			// check if user is admin
+			user, err := GetUser(userID)
+			if err != nil {
+				return model.Link{}, errors.New("you are not allowed to update this link")
+			}
+			if !user.IsInnerCircle() {
+				return model.Link{}, errors.New("you are not allowed to update this link")
+			}
+		}
+	} else {
+		link.UserID = userID
+	}
+
 	if database.DB.Where("id = ?", link.ID).Updates(&link).RowsAffected == 0 {
 		utils.SugarLogger.Infof("New link created with id: %s", link.ID)
 		if result := database.DB.Create(&link); result.Error != nil {
