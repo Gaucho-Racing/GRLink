@@ -70,9 +70,11 @@ function App() {
               </OutlineButton>
             </div>
             <div className="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
-              {links.map((link) => (
-                <LinkCard key={link.id} link={link} />
-              ))}
+              {links
+                .filter((link) => link.user_id === currentUser.id)
+                .map((link) => (
+                  <LinkCard key={link.id} link={link} />
+                ))}
             </div>
             <div className="flex flex-row items-center justify-between pt-8">
               <h2>All Links</h2>
