@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useState, useEffect } from "react";
+import { useNavigate, useParams } from "react-router-dom";
 import {
   Card,
   CardContent,
@@ -17,35 +17,51 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
-import { addDays, format } from "date-fns";
+import { format, addDays } from "date-fns";
 import { Calendar as CalendarIcon } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Link, initLink } from "@/models/link";
 import { BACKEND_URL } from "@/consts/config";
 import { notify } from "@/lib/notify";
 import axios from "axios";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { useUser } from "@/lib/store";
+import { OutlineButton } from "@/components/ui/outline-button";
 import { AuthLoading } from "@/components/AuthLoading";
 import Header from "@/components/Header";
-import { OutlineButton } from "@/components/ui/outline-button";
 import Footer from "@/components/Footer";
-import { useUser } from "@/lib/store";
+import { getAxiosErrorMessage } from "@/lib/axios-error-handler";
 import { checkCredentials } from "@/lib/auth";
 import React from "react";
-import { getAxiosErrorMessage } from "@/lib/axios-error-handler";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
-export default function NewLinkPage() {
+export default function EditLinkPage() {
   const navigate = useNavigate();
+  const { id } = useParams();
   const currentUser = useUser();
   const [link, setLink] = useState<Partial<Link>>(initLink);
   const [date, setDate] = useState<Date>(addDays(new Date(), 364));
+
+  useEffect(() => {
+    const fetchLink = async () => {
+      try {
+        const response = await axios.get(`${BACKEND_URL}/links/${id}`, {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("sentinel_access_token")}`,
+          },
+        });
+        const linkData = response.data;
+        setLink(linkData);
+        if (linkData.expires_at) {
+          setDate(new Date(linkData.expires_at));
+        }
+      } catch (error: any) {
+        notify.error(error.response?.data?.message || "Failed to fetch link");
+        navigate("/");
+      }
+    };
+
+    fetchLink();
+  }, [id, navigate]);
 
   React.useEffect(() => {
     checkAuth().then(() => {});
@@ -72,16 +88,22 @@ export default function NewLinkPage() {
           Authorization: `Bearer ${localStorage.getItem("sentinel_access_token")}`,
         },
       });
-      notify.success("Link created successfully!");
+      notify.success("Link updated successfully!");
       navigate("/");
     } catch (error: any) {
       notify.error(getAxiosErrorMessage(error));
     }
   };
 
+  const handleDateSelect = (selectedDate: Date | undefined) => {
+    if (selectedDate) {
+      setDate(selectedDate);
+    }
+  };
+
   return (
     <>
-      {currentUser.id == "" ? (
+      {currentUser.id == "" || link.id == "" ? (
         <AuthLoading />
       ) : (
         <div className="flex flex-col justify-between">
@@ -89,11 +111,11 @@ export default function NewLinkPage() {
           <div className="flex flex-col justify-start p-4 lg:p-32 lg:pt-16">
             <Card>
               <CardHeader>
-                <CardTitle>Create New Link</CardTitle>
+                <CardTitle>Edit Link</CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
                 <div className="space-y-2">
-                  <Label htmlFor="original_url">Target URL</Label>
+                  <Label htmlFor="original_url">Original URL</Label>
                   <Input
                     id="original_url"
                     type="url"
@@ -102,6 +124,7 @@ export default function NewLinkPage() {
                     onChange={(e) =>
                       setLink({ ...link, original_url: e.target.value })
                     }
+                    required
                   />
                 </div>
 
@@ -122,14 +145,17 @@ export default function NewLinkPage() {
                   <Label htmlFor="short_code">Created By</Label>
                   <div className="mt-2 flex items-center">
                     <Avatar className="mr-4">
-                      <AvatarImage src={currentUser.avatar_url} />
-                      <AvatarFallback>CN</AvatarFallback>
+                      <AvatarImage src={link.user?.avatar_url} />
+                      <AvatarFallback>
+                        {link.user?.first_name?.[0]}
+                        {link.user?.last_name?.[0]}
+                      </AvatarFallback>
                     </Avatar>
                     <div className="flex flex-col items-start justify-center">
                       <div>
-                        {currentUser.first_name} {currentUser.last_name}
+                        {link.user?.first_name} {link.user?.last_name}
                       </div>
-                      <div className="text-gray-400">{currentUser.email}</div>
+                      <div className="text-gray-400">{link.user?.email}</div>
                     </div>
                   </div>
                 </div>
@@ -138,86 +164,21 @@ export default function NewLinkPage() {
                   <Popover>
                     <PopoverTrigger asChild>
                       <Button
-                        variant={"outline"}
+                        variant="outline"
                         className={cn(
                           "w-full justify-start text-left font-normal",
                           !date && "text-muted-foreground",
                         )}
                       >
                         <CalendarIcon className="mr-2 h-4 w-4" />
-                        {date ? format(date, "PPP") : <span>Pick a date</span>}
+                        {date ? format(date, "PPP") : "Pick a date"}
                       </Button>
                     </PopoverTrigger>
-                    <PopoverContent className="w-auto bg-background p-0">
-                      <div className="flex justify-between">
-                        <div className="w-full p-2">
-                          <Select
-                            value={date ? date.getFullYear().toString() : ""}
-                            onValueChange={(value) => {
-                              const newDate = new Date(date || new Date());
-                              newDate.setFullYear(parseInt(value));
-                              setDate(newDate);
-                            }}
-                          >
-                            <SelectTrigger className="w-full">
-                              <SelectValue placeholder="Select year" />
-                            </SelectTrigger>
-                            <SelectContent>
-                              {Array.from({ length: 10 }, (_, i) => {
-                                const year = new Date().getFullYear() + i;
-                                return (
-                                  <SelectItem
-                                    key={year}
-                                    value={year.toString()}
-                                  >
-                                    {year}
-                                  </SelectItem>
-                                );
-                              })}
-                            </SelectContent>
-                          </Select>
-                        </div>
-                        <div className="w-full p-2">
-                          <Select
-                            value={date ? (date.getMonth() + 1).toString() : ""}
-                            onValueChange={(value) => {
-                              const newDate = new Date(date || new Date());
-                              newDate.setMonth(parseInt(value) - 1);
-                              setDate(newDate);
-                            }}
-                          >
-                            <SelectTrigger className="w-full">
-                              <SelectValue placeholder="Select month" />
-                            </SelectTrigger>
-                            <SelectContent>
-                              {Array.from({ length: 12 }, (_, i) => {
-                                const month = i + 1;
-                                return (
-                                  <SelectItem
-                                    key={month}
-                                    value={month.toString()}
-                                  >
-                                    {new Date(0, i).toLocaleString("default", {
-                                      month: "long",
-                                    })}
-                                  </SelectItem>
-                                );
-                              })}
-                            </SelectContent>
-                          </Select>
-                        </div>
-                      </div>
+                    <PopoverContent className="w-auto p-0">
                       <Calendar
                         mode="single"
                         selected={date}
-                        onSelect={(value) => {
-                          if (value) {
-                            setDate(value);
-                          } else {
-                            setDate(addDays(new Date(), 364));
-                          }
-                        }}
-                        month={date || new Date()}
+                        onSelect={handleDateSelect}
                         initialFocus
                       />
                     </PopoverContent>

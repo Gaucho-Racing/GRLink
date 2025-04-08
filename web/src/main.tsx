@@ -7,6 +7,7 @@ import App from "@/App.tsx";
 import LoginPage from "@/pages/auth/LoginPage.tsx";
 import NewLinkPage from "@/pages/NewLinkPage.tsx";
 import ErrorPage from "@/pages/ErrorPage.tsx";
+import EditLinkPage from "./pages/EditLinkPage";
 
 const router = createBrowserRouter([
   {
@@ -16,6 +17,10 @@ const router = createBrowserRouter([
   {
     path: "/links/new",
     element: <NewLinkPage />,
+  },
+  {
+    path: "/links/:id/edit",
+    element: <EditLinkPage />,
   },
   {
     path: "/auth/login",
