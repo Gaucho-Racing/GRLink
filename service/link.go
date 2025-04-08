@@ -16,6 +16,7 @@ func GetAllLinks() []model.Link {
 		return nil
 	}
 	for i, link := range links {
+		links[i].User, _ = GetUser(link.UserID)
 		links[i].Statistics = GetStatisticsForLink(link.ID)
 	}
 	return links
@@ -27,6 +28,7 @@ func GetLinkByID(id string) model.Link {
 		utils.SugarLogger.Errorf("Error getting link with id: %s, error: %v", id, err)
 		return model.Link{}
 	}
+	link.User, _ = GetUser(link.UserID)
 	link.Statistics = GetStatisticsForLink(link.ID)
 	return link
 }
@@ -37,18 +39,30 @@ func GetLinkByShortCode(shortCode string) model.Link {
 		utils.SugarLogger.Errorf("Error getting link with short code: %s, error: %v", shortCode, err)
 		return model.Link{}
 	}
+	link.User, _ = GetUser(link.UserID)
+	link.Statistics = GetStatisticsForLink(link.ID)
 	return link
 }
 
 func CreateLink(link model.Link, userID string) (model.Link, error) {
 	if link.ID == "" {
+		// new link
 		link.ID = uuid.New().String()
+		// if custom short code is provided, check if it is already taken
+		if link.ShortCode != "" {
+			if GetLinkByShortCode(link.ShortCode).ID != "" {
+				return model.Link{}, errors.New("custom short code already taken")
+			}
+		}
 	}
 	if link.ShortCode == "" {
 		link.ShortCode = uuid.New().String()[:6]
 		for GetLinkByShortCode(link.ShortCode).ID != "" {
 			link.ShortCode = uuid.New().String()[:6]
 		}
+	}
+	if link.OriginalURL == "" {
+		return model.Link{}, errors.New("link target url is required")
 	}
 
 	existingLink := GetLinkByID(link.ID)
@@ -66,6 +80,8 @@ func CreateLink(link model.Link, userID string) (model.Link, error) {
 	} else {
 		link.UserID = userID
 	}
+
+	link.ExpiresAt = utils.WithPrecision(link.ExpiresAt)
 
 	if database.DB.Where("id = ?", link.ID).Updates(&link).RowsAffected == 0 {
 		utils.SugarLogger.Infof("New link created with id: %s", link.ID)
