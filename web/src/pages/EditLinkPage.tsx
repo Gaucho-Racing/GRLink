@@ -89,7 +89,7 @@ export default function EditLinkPage() {
         },
       });
       notify.success("Link updated successfully!");
-      navigate("/");
+      navigate(`/links/${id}`);
     } catch (error: any) {
       notify.error(getAxiosErrorMessage(error));
     }
@@ -115,7 +115,7 @@ export default function EditLinkPage() {
               </CardHeader>
               <CardContent className="space-y-4">
                 <div className="space-y-2">
-                  <Label htmlFor="original_url">Original URL</Label>
+                  <Label htmlFor="original_url">Target URL</Label>
                   <Input
                     id="original_url"
                     type="url"
@@ -201,7 +201,7 @@ export default function EditLinkPage() {
                     <Button
                       variant={"outline"}
                       onClick={() => {
-                        navigate("/");
+                        navigate(`/links/${id}`);
                       }}
                       className="mr-2 py-5"
                     >

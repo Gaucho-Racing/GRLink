@@ -83,7 +83,7 @@ func CreateLink(link model.Link, userID string) (model.Link, error) {
 
 	link.ExpiresAt = utils.WithPrecision(link.ExpiresAt)
 
-	if database.DB.Where("id = ?", link.ID).Updates(&link).RowsAffected == 0 {
+	if database.DB.Where("id = ?", link.ID).Select("*").Updates(&link).RowsAffected == 0 {
 		utils.SugarLogger.Infof("New link created with id: %s", link.ID)
 		if result := database.DB.Create(&link); result.Error != nil {
 			return model.Link{}, result.Error

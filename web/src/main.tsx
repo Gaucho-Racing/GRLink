@@ -8,11 +8,15 @@ import LoginPage from "@/pages/auth/LoginPage.tsx";
 import NewLinkPage from "@/pages/NewLinkPage.tsx";
 import ErrorPage from "@/pages/ErrorPage.tsx";
 import EditLinkPage from "./pages/EditLinkPage";
-
+import LinkDetailsPage from "@/pages/LinkDetailsPage";
 const router = createBrowserRouter([
   {
     path: "/",
     element: <App />,
+  },
+  {
+    path: "/links/:id",
+    element: <LinkDetailsPage />,
   },
   {
     path: "/links/new",

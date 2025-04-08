@@ -8,19 +8,12 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import {
-  Copy,
-  ExternalLink,
-  BarChart2,
-  Clock,
-  Edit2,
-  Check,
-} from "lucide-react";
+import { Copy, ExternalLink, BarChart2, Clock, Check } from "lucide-react";
 import { useState } from "react";
 import { formatDistanceToNow } from "date-fns";
 import { BACKEND_URL } from "@/consts/config";
 import { useNavigate } from "react-router-dom";
+
 interface LinkCardProps {
   link: Link;
   onEdit?: (link: Link) => void;
@@ -31,7 +24,8 @@ export function LinkCard({ link, onCopy }: LinkCardProps) {
   const navigate = useNavigate();
   const [copied, setCopied] = useState(false);
 
-  const handleCopy = () => {
+  const handleCopy = (e: React.MouseEvent) => {
+    e.stopPropagation();
     const shortUrl = `${window.location.origin}/${link.short_code}`;
     navigator.clipboard.writeText(shortUrl);
     setCopied(true);
@@ -39,24 +33,55 @@ export function LinkCard({ link, onCopy }: LinkCardProps) {
     onCopy?.(link);
   };
 
-  const handleEdit = () => {
-    navigate(`/links/${link.id}/edit`);
+  const handleVisit = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    window.open(`${BACKEND_URL}/${link.short_code}`, "_blank");
+  };
+
+  const handleCardClick = () => {
+    navigate(`/links/${link.id}`);
+  };
+
+  const getStatusStyle = () => {
+    const now = new Date();
+    const expiresAt = new Date(link.expires_at);
+
+    if (now > expiresAt) {
+      return "bg-red-400 text-white";
+    }
+
+    if (!link.is_active) {
+      return "bg-neutral-800 text-white";
+    }
+
+    return "bg-gradient-to-br from-gr-pink to-gr-purple text-white";
   };
 
   return (
-    <Card className="w-full">
-      <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+    <Card
+      className="w-full cursor-pointer transition-all duration-200 hover:scale-[1.02] hover:bg-neutral-900 hover:shadow-lg"
+      onClick={handleCardClick}
+    >
+      <CardHeader className="pb-2">
         <div className="space-y-1">
-          <CardTitle className="text-xl font-semibold">
-            {link.short_code}
-          </CardTitle>
+          <div className="flex w-full items-center justify-between">
+            <CardTitle className="text-xl font-semibold">
+              {link.short_code}
+            </CardTitle>
+            <div
+              className={`ml-2 rounded-md px-2 py-1 text-xs font-medium ${getStatusStyle()}`}
+            >
+              {new Date() > new Date(link.expires_at)
+                ? "Expired"
+                : link.is_active
+                  ? "Active"
+                  : "Inactive"}
+            </div>
+          </div>
           <CardDescription className="max-w-[300px] truncate text-lg text-gr-pink">
             {link.original_url}
           </CardDescription>
         </div>
-        <Badge variant={link.is_active ? "default" : "secondary"}>
-          {link.is_active ? "Active" : "Inactive"}
-        </Badge>
       </CardHeader>
       <CardContent>
         <div className="flex items-center space-x-4 text-sm text-muted-foreground">
@@ -72,7 +97,7 @@ export function LinkCard({ link, onCopy }: LinkCardProps) {
           </div>
         </div>
       </CardContent>
-      <CardFooter className="flex justify-between">
+      <CardFooter className="flex justify-end">
         <div className="flex space-x-2">
           <Button
             variant="outline"
@@ -95,24 +120,11 @@ export function LinkCard({ link, onCopy }: LinkCardProps) {
           <Button
             variant="outline"
             size="sm"
-            onClick={() =>
-              window.open(`${BACKEND_URL}/${link.short_code}`, "_blank")
-            }
+            onClick={handleVisit}
             className="flex items-center"
           >
             <ExternalLink className="mr-2 h-4 w-4" />
             Visit
-          </Button>
-        </div>
-        <div className="flex space-x-2">
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={handleEdit}
-            className="flex items-center"
-          >
-            <Edit2 className="mr-2 h-4 w-4" />
-            Edit
           </Button>
         </div>
       </CardFooter>
