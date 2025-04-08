@@ -67,7 +67,28 @@ Make sure to set the client id and secret for your application. If you don't hav
 
 ### Start Backend
 
+Make sure you have [Go](https://go.dev/) version [1.23](https://go.dev/doc/devel/release#go1.23.0) or above installed.
+
+The following command will automatically install dependencies, source the `.env` file, and start the application.
+
+```
+make run
+```
+
+The backend should now be listening on `localhost:7000` (or whatever you set `PORT` to).
+
 ### Start Frontend
+
+Navigate to the `web/` directory and execute the following.
+
+```
+npm install
+npm run dev
+```
+
+Make sure to update the `SENTINEL_CLIENT_ID` and `BACKEND_URL` values in `src/consts/config.tsx`.
+
+Open [http://localhost:5173](http://localhost:5173) with your browser to see the result.
 
 ## Contributing
 
