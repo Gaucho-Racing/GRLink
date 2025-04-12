@@ -95,7 +95,7 @@ func CreateLink(link model.Link, userID string) (model.Link, error) {
 }
 
 func DeleteLink(id string) error {
-	if result := database.DB.Delete(&model.Link{}, id); result.Error != nil {
+	if result := database.DB.Where("id = ?", id).Delete(&model.Link{}); result.Error != nil {
 		return result.Error
 	}
 	return nil
