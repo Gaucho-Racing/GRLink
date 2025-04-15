@@ -17,7 +17,7 @@ Check out our wiki page [here](https://wiki.gauchoracing.com/books/grlink) to le
 
 ## Getting Started
 
-### Local Database
+### Setup local database
 
 Start by running SingleStore locally using the provided Docker image.
 
@@ -46,7 +46,7 @@ Once running, create the `grlink` database that the application is going to use.
 CREATE DATABASE grlink;
 ```
 
-### Configure Environment Variables
+### Configure environment variables
 
 Create a `.env` file in the root level of the repository and copy in the following environemnt variables.
 
@@ -70,7 +70,7 @@ SENTINEL_REDIRECT_URI=http://localhost:5173/auth/login
 
 Make sure to set the client id and secret for your application. If you don't have one already, you can create one through [Sentinel](https://sso.gauchoracing.com/applications).
 
-### Start Backend
+### Start the backend
 
 Make sure you have [Go](https://go.dev/) version [1.23](https://go.dev/doc/devel/release#go1.23.0) or above installed.
 
@@ -82,7 +82,7 @@ make run
 
 The backend should now be listening on `localhost:7000` (or whatever you set `PORT` to).
 
-### Start Frontend
+### Start the frontend
 
 Navigate to the `web/` directory and execute the following.
 
