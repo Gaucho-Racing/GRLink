@@ -6,6 +6,11 @@
 [![Release](https://img.shields.io/github/release/gaucho-racing/grlink.svg?style=flat-square)](https://github.com/gaucho-racing/grlink/releases)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
+<div style="display: flex; gap: 10px;">
+  <img src="assets/home.png" alt="GRLink Dashboard" width="49%" />
+  <img src="assets/details.png" alt="GRLink Dashboard" width="49%" />
+</div>
+
 GRLink is Gaucho Racing's custom URL shortener.
 
 Check out our wiki page [here](https://wiki.gauchoracing.com/books/grlink) to learn more.
