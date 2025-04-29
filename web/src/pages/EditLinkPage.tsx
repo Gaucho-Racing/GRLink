@@ -79,9 +79,24 @@ export default function EditLinkPage() {
     }
   };
 
+  const canEdit = () => {
+    return (
+      currentUser.id === link.user_id ||
+      currentUser.roles.includes("d_admin") ||
+      currentUser.roles.includes("d_officer") ||
+      currentUser.roles.includes("d_lead")
+    );
+  };
+
   const createLink = async () => {
+    if (!canEdit()) {
+      notify.error("You are not authorized to edit this link");
+      return;
+    }
     link.expires_at = date;
-    link.user_id = currentUser.id;
+    if (link.user_id == "") {
+      link.user_id = currentUser.id;
+    }
     try {
       await axios.post(`${BACKEND_URL}/links`, link, {
         headers: {
