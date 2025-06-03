@@ -528,6 +528,18 @@ export default function LinkDetailsPage() {
               <div className="space-y-8">
                 <Card>
                   <CardHeader>
+                    <CardTitle>Total Visits</CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="flex items-center justify-center">
+                      <p className="text-5xl font-bold">
+                        {link.statistics?.visits.length || 0}
+                      </p>
+                    </div>
+                  </CardContent>
+                </Card>
+                <Card>
+                  <CardHeader>
                     <CardTitle>Visits Over Time</CardTitle>
                   </CardHeader>
                   <CardContent>
