@@ -12,6 +12,37 @@ import (
 	"github.com/google/uuid"
 )
 
+// getDeviceType determines the operating system from the user agent string
+func getDeviceType(userAgent string) string {
+	userAgent = strings.ToLower(userAgent)
+	
+	// Check for iOS devices
+	if strings.Contains(userAgent, "iphone") || 
+		strings.Contains(userAgent, "ipad") || 
+		strings.Contains(userAgent, "ipod") {
+		return "iOS"
+	}
+	
+	// Check for Android devices
+	if strings.Contains(userAgent, "android") {
+		return "Android"
+	}
+	
+	// Check for Windows
+	if strings.Contains(userAgent, "windows") {
+		return "Windows"
+	}
+	
+	// Check for MacOS - looking for both newer "macOS" and older "mac os x" strings
+	if strings.Contains(userAgent, "mac os") || 
+		strings.Contains(userAgent, "macos") {
+		return "MacOS"
+	}
+	
+	// Default to Other for all other cases
+	return "Other"
+}
+
 func GetAllLinks(c *gin.Context) {
 	links := service.GetAllLinks()
 	c.JSON(http.StatusOK, links)
@@ -80,7 +111,7 @@ func LaunchLink(c *gin.Context) {
 		UserAgent:  c.Request.UserAgent(),
 		Referer:    c.Request.Referer(),
 		Country:    c.Request.Header.Get("CF-IPCountry"),
-		DeviceType: c.Request.Header.Get("Sec-CH-UA-Platform"),
+		DeviceType: getDeviceType(c.Request.UserAgent()),
 	}
 	service.CreateVisit(visit)
 
