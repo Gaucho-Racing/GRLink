@@ -8,7 +8,7 @@ export const SENTINEL_CLIENT_ID = "c1txl4YKsSgr";
 export const SOCIAL_LINKS = {
   github: "https://github.com/gaucho-racing/grlink",
   instagram: "https://instagram.com/gauchoracingucsb",
-  twitter: "https://twitter.com/gaucho_racing",
+  twitter: "https://twitter.com/gauchoracing_",
   linkedin:
     "https://www.linkedin.com/company/gaucho-racing-at-uc-santa-barbara",
 };
