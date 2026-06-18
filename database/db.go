@@ -7,31 +7,38 @@ import (
 	"grlink/utils"
 	"time"
 
-	singlestore "github.com/singlestore-labs/gorm-singlestore"
+	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 )
 
 var DB *gorm.DB
 
-var dbRetries = 0
-
 func InitializeDB() error {
-	dsn := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s?charset=utf8mb4&parseTime=True&loc=UTC", config.DatabaseUser, config.DatabasePassword, config.DatabaseHost, config.DatabasePort, config.DatabaseName)
-	db, err := gorm.Open(singlestore.Open(dsn), &gorm.Config{})
-	if err != nil {
-		if dbRetries < 5 {
-			dbRetries++
-			utils.SugarLogger.Errorln("failed to connect database, retrying in 5s... ")
-			time.Sleep(time.Second * 5)
-			InitializeDB()
-		} else {
-			return fmt.Errorf("failed to connect database after 5 attempts")
+	dsn := fmt.Sprintf("host=%s user=%s password=%s dbname=%s port=%s sslmode=disable TimeZone=UTC",
+		config.DatabaseHost, config.DatabaseUser, config.DatabasePassword, config.DatabaseName, config.DatabasePort)
+
+	var db *gorm.DB
+	var err error
+
+	for retries := 0; retries < 5; retries++ {
+		db, err = gorm.Open(postgres.Open(dsn), &gorm.Config{})
+
+		if err == nil {
+			utils.SugarLogger.Infoln("Connected to Postgres database")
+
+			err = db.AutoMigrate(&model.Link{}, &model.LinkStatistics{}, &model.LinkVisit{})
+			if err != nil {
+				return fmt.Errorf("failed to migrate database: %w", err)
+			}
+
+			utils.SugarLogger.Infoln("AutoMigration complete")
+			DB = db
+			return nil
 		}
-	} else {
-		utils.SugarLogger.Infoln("Connected to database")
-		db.AutoMigrate(&model.Link{}, &model.LinkStatistics{}, &model.LinkVisit{})
-		utils.SugarLogger.Infoln("AutoMigration complete")
-		DB = db
+
+		utils.SugarLogger.Errorf("failed to connect database, retrying in 5s... (Attempt %d/5)\n", retries+1)
+		time.Sleep(time.Second * 5)
 	}
-	return nil
+
+	return fmt.Errorf("failed to connect database after 5 attempts: %w", err)
 }
